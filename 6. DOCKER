@@ -402,6 +402,148 @@ window.onclick = function(event) {
 </body>
 </html>
 
+===============================================
+
+12-7-23 Volumes
+
+volumes:
+to store data in container.
+volume means a directory.
+single volume can be shared to multiple containers.
+but at a single time we can share a volume to single conatiners.
+
+CREATION OF VOLUMES:
+
+1. Dockerfile
+
+FROM ubuntu
+VOLUME ["/vol1"]
+
+docker build -t swiggy:v1 .
+
+docker run -it --name cont1 swiggy:v1
+cd vol1
+touch file{1..5} -- > exit
+
+docker run -it --name cont2 --volumes-from cont1 --privileged=true ubuntu
+cd vol1
+
+2. FROM COMMAND:
+
+docker run -it --name cont3 -v /vol2 ubuntu
+cd vol2
+touch java{1..5} -- > exit
+
+docker run -it --name cont4 --volumes-from cont3 --privileged=true ubuntu
+
+3. MOUNTING A VOLUME: volume is created on local and attach to container
+
+docker volume ls	: to see list of volumes
+docker volume create vol3: to create a volume
+docker inspect volume vol-name: to get complete information of volume
+docker volume rm vol4 : to remove the volume
+
+create volume
+inspect volume
+cd mountpoint 
+create files
+docker run -it --name cont5 --mount "source=vol3,destination=/abc" ubuntu
+
+4. LOCAL -- > CONTAINER
+cd /home/ec2-user
+create some files
+
+docker run -it --name cont7 -v /home/ec2-user:/abcd ubuntu
+
+
+HISTORY:
+
+ 2  docker images
+    3  docker version
+    4  vim Dockerfile
+    5  docker build -t swiggy:v1 .
+    6  docker run -it --name cont1 swiggy:v1
+    7  docker ps -a
+    8  docker run -it --name cont2 --volumes-from cont1 --privileged=true ubuntu
+    9  docker attach cont1
+   10  cat Dockerfile
+   11  docker run -it --name cont3 -v /vol2 ubuntu
+   12  docker run -it --name cont4 --volumes-from cont3 --privileged=true ubuntu
+   13  docker volume ls
+   14* docker inspect volume 265dd7bedd1c088e6035e61b2d6c9fa15709408c34411225c105b4440d29bb5
+   15  docker volume create vol3
+   16  docker volume ls
+   17  docker volume inspect vol3
+   18  cd /var/lib/docker/volumes/vol3/_data
+   19  touch python{1..5}
+   20  ll
+   21  cd
+   22  docker run -it --name cont5 --mount "source=/vol3, destination=/vol3" ubuntu
+   23  docker run -it --name cont6 --mount "source=/vol3, dest=/vol3" ubuntu
+   24  docker run -it --name cont7 --mount "source=/vol3 dest=/vol3" ubuntu
+   25  docker run -it --name cont7 --mount source=/vol3,destination=/vol3 ubuntu
+   26  docker run -it --name cont8 --mount "source=/vol3,destination=/vol3" ubuntu
+   27  docker create volume netflix
+   28  docker create volume volumedev
+   29  docker ps -a
+   30  docker volume create volumedev
+   31  docker volume inspect volumedev
+   32  cd /var/lib/docker/volumes/volumedev/_data
+   33  touch python{1..10}
+   34  cd
+   35  docker run -it --name cont5 --mount "source=volumedev,destination=/abc" ubuntu
+   36  docker volume inspect volumedev
+   37  cd /var/lib/docker/volumes/volumedev/_data
+   38  ll
+   39  docker volume ls
+   40  docker volume create vol4
+   41  docker volume ls
+   42  docker volume rm vol4
+   43  docker volume ls
+   44  cd
+   45  docker volume create raham
+   46  docker volume ls
+   47  docer inspect volume raham
+   48  docker inspect volume raham
+   49  cd /var/lib/docker/volumes/raham/_data
+   50  touch abc.txt{1..5}
+   51  ll
+   52  docker run -it --name cont6 --mount "source=raham,destination=/raham" ubuntu
+   53  cd
+   54  cd /home/ec2-user/
+   55  ll
+   56  touch file{1..10}
+   57  ll
+   58  pwd
+   59  docker run -it --name cont7 -v /home/ec2-user:/abcd ubuntu
+   60  cd
+   61  docker volume create vola
+   62  docker volume create volb
+   63  docker run -it --name cont8 -v vola -v volb ubuntu
+   64  vim Dockerfile
+   65  docker build -t swiggy:v1 .
+   66  docker run -it --name cont9 swiggy:v1
+   67  docker system df -v
+   68  docker system df
+   69  docker attach cont9
+   70  ll
+   71  docker volume
+   72  docker attach cont9
+   73  docker volume inspect vol3
+   74  cd /var/lib/docker/volumes/vol3/_data
+   75  ll
+   76  cp * /root/ -R
+   77  cd /root/
+   78  ll
+   79  vim Dockerfile
+   80  cat Dockerfile
+   81  docker build -it swiggy:v2 .
+   82  docker build -t swiggy:v2 .
+   83  docker run -it --namwe cont10 swiggy:v2
+   84  docker run -it --name cont10 swiggy:v2
+   85  history
+
+
 ====================
 
 DAY-04: 13-07-2023 COMPOSE
